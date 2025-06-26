@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Status Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .controls {
+            background: #111;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .btn {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: #555;
+            border-color: #777;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.primary {
+            background: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn.primary:hover {
+            background: #0056b3;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .status-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .status-card:hover {
+            border-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .status-preview {
+            width: 100%;
+            height: 200px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status-preview .placeholder {
+            color: #666;
+            font-size: 3rem;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .status-info {
+            padding: 1rem;
+        }
+
+        .status-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .status-meta {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #ff6b6b;
+            background: #1a0f0f;
+            margin: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ff6b6b33;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #666;
+        }
+
+        .empty h3 {
+            margin-bottom: 1rem;
+            color: #888;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img,
+        .modal-content video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .status-grid {
+                grid-template-columns: 1fr;
+                padding: 0.5rem;
+            }
+            
+            .controls {
+                padding: 0.5rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>WhatsApp Status Viewer</h1>
+    </div>
+
+    <div class="controls">
+        <button class="btn primary" onclick="loadStatuses()">📱 Load Statuses</button>
+        <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
+        <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display: none;">
+        <button class="btn" onclick="document.getElementById('fileInput').click()">📁 Browse Files</button>
+    </div>
+
+    <div id="content">
+        <div class="empty">
+            <h3>No statuses loaded</h3>
+            <p>Click "Load Statuses" to view WhatsApp status files, or "Browse Files" to select files manually.</p>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalMedia"></div>
+        </div>
+    </div>
+
+    <script>
+        const WHATSAPP_STATUS_PATH = '/storage/emulated/0/WhatsApp/Media/.Statuses/';
+        let statusFiles = [];
+
+        // Sample data for demonstration (in real app, this would come from file system)
+        const sampleStatuses = [
+            { name: 'IMG_20240626_001.jpg', type: 'image', size: '2.1 MB', date: '2024-06-26' },
+            { name: 'VID_20240626_002.mp4', type: 'video', size: '5.8 MB', date: '2024-06-26' },
+            { name: 'IMG_20240625_003.jpg', type: 'image', size: '1.9 MB', date: '2024-06-25' },
+            { name: 'VID_20240625_004.mp4', type: 'video', size: '7.2 MB', date: '2024-06-25' }
+        ];
+
+        function loadStatuses() {
+            const content = document.getElementById('content');
+            content.innerHTML = '<div class="loading">Loading statuses...</div>';
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                try {
+                    // In a real Android WebView app, you would use:
+                    // Android.getWhatsAppStatuses() or similar native method
+                    // For demonstration, we'll use sample data
+                    statusFiles = sampleStatuses;
+                    displayStatuses(statusFiles);
+                } catch (error) {
+                    showError('Failed to load WhatsApp statuses. Make sure the app has necessary permissions.');
+                }
+            }, 1000);
+        }
+
+        function displayStatuses(files) {
+            const content = document.getElementById('content');
+            
+            if (files.length === 0) {
+                content.innerHTML = `
+                    <div class="empty">
+                        <h3>No statuses found</h3>
+                        <p>No files found in the WhatsApp statuses folder.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'status-grid';
+            
+            files.forEach((file, index) => {
+                const card = createStatusCard(file, index);
+                grid.appendChild(card);
+            });
+            
+            content.innerHTML = '';
+            content.appendChild(grid);
+        }
+
+        function createStatusCard(file, index) {
+            const card = document.createElement('div');
+            card.className = 'status-card';
+            
+            const isVideo = file.type === 'video' || file.name.toLowerCase().includes('.mp4');
+            const previewIcon = isVideo ? '▶️' : '🖼️';
+            
+            card.innerHTML = `
+                <div class="status-preview">
+                    <div class="placeholder">${previewIcon}</div>
+                    ${isVideo ? '<div class="play-overlay">▶</div>' : ''}
+                </div>
+                <div class="status-info">
+                    <div class="status-name">${file.name}</div>
+                    <div class="status-meta">${file.size} • ${file.date}</div>
+                    <div class="status-actions">
+                        <button class="btn" onclick="viewStatus(${index})">👁️ View</button>
+                        <button class="btn" onclick="downloadStatus(${index})">⬇️ Save</button>
+                        <button class="btn" onclick="generateCaption('${file.name}')">🤖 AI Caption</button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function viewStatus(index) {
+            const file = statusFiles[index];
+            const modal = document.getElementById('modal');
+            const modalMedia = document.getElementById('modalMedia');
+            
+            const isVideo = file.type === 'video' || file.name.toLowerCase().includes('.mp4');
+            const filePath = WHATSAPP_STATUS_PATH + file.name;
+            
+            if (isVideo) {
+                modalMedia.innerHTML = `
+                    <video controls autoplay>
+                        <source src="file://${filePath}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+            } else {
+                modalMedia.innerHTML = `
+                    <img src="file://${filePath}" alt="${file.name}">
+                `;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            document.getElementById('modalMedia').innerHTML = '';
+        }
+
+        function downloadStatus(index) {
+            const file = statusFiles[index];
+            const filePath = WHATSAPP_STATUS_PATH + file.name;
+            
+            try {
+                // In a real Android WebView app, you would use:
+                // Android.downloadFile(filePath, file.name) or similar
+                
+                // For web demonstration, we'll show an alert
+                alert(`Downloading ${file.name}...\n\nIn a real Android app, this would save the file to your device's download folder.`);
+                
+                // Alternative: Create download link (won't work with file:// URLs)
+                // const link = document.createElement('a');
+                // link.href = filePath;
+                // link.download = file.name;
+                // link.click();
+            } catch (error) {
+                showError('Failed to download file: ' + error.message);
+            }
+        }
+
+        function generateCaption(fileName) {
+            const url = `https://claude.ai/new?message=${encodeURIComponent('Generate a creative caption for this WhatsApp status: ' + fileName)}`;
+            
+            try {
+                // In Android WebView, you might use:
+                // Android.openUrl(url) or similar
+                window.open(url, '_blank');
+            } catch (error) {
+                // Fallback for web
+                alert(`Opening Claude.ai to generate caption for ${fileName}...\n\nURL: ${url}`);
+            }
+        }
+
+        function clearCache() {
+            statusFiles = [];
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="empty">
+                    <h3>Cache cleared</h3>
+                    <p>All cached status files have been cleared.</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="error">
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Handle manual file selection
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            const processedFiles = files.map(file => ({
+                name: file.name,
+                type: file.type.startsWith('video/') ? 'video' : 'image',
+                size: formatFileSize(file.size),
+                date: new Date().toISOString().split('T')[0],
+                file: file
+            }));
+            
+            statusFiles = processedFiles;
+            displayStatuses(statusFiles);
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Handle back button on mobile
+        window.addEventListener('popstate', function(e) {
+            const modal = document.getElementById('modal');
+            if (modal.classList.contains('active')) {
+                closeModal();
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
