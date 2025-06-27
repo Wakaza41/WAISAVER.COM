@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga Caption Creator | Generate Emotional Anime-Style Quotes</title>
+    <meta name="description" content="Create powerful manga-style captions for any mood. Generate emotional anime quotes for heartbreak, fight scenes, friendship moments, revenge, sadness, and love.">
+    <meta name="keywords" content="manga caption, anime quote generator, emotional manga quotes, create manga captions, manga dialogue, anime style text">
+    <meta name="author" content="Manga Creator Pro">
+    <meta property="og:title" content="Manga Caption Creator - Generate Emotional Anime-Style Quotes">
+    <meta property="og:description" content="Create powerful manga captions in seconds. Choose a mood and get a dramatic one-liner perfect for social media, fan art, and manga projects.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://example.com/manga-caption-preview.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Manga Caption Creator">
+    <meta name="twitter:description" content="Generate emotional anime-style quotes with our free manga caption generator">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f8f8f8;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(25, 25, 45, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid #4a4a8a;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #e94560, #ff6b6b);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .manga-strip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: repeating-linear-gradient(
+                45deg,
+                #0f3460,
+                #0f3460 10px,
+                #1a1a2e 10px,
+                #1a1a2e 20px
+            );
+        }
+        
+        .app-content {
+            padding: 30px;
+        }
+        
+        .seo-intro {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #e94560;
+        }
+        
+        .seo-intro h2 {
+            color: #ffd166;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .seo-intro p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .seo-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .keyword {
+            background: rgba(233, 69, 96, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .mood-selection {
+            margin-bottom: 30px;
+        }
+        
+        .mood-selection h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: #ffd166;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .moods-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .mood-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid #4a4a8a;
+            border-radius: 12px;
+            padding: 15px 10px;
+            color: #f8f8f8;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mood-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+            transform: translateY(-3px);
+            border-color: #e94560;
+        }
+        
+        .mood-btn.active {
+            background: rgba(233, 69, 96, 0.4);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
+        
+        .mood-btn i {
+            font-size: 1.8rem;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(to right, #0ea5e9, #38bdf8);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+        }
+        
+        .generate-btn:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .caption-container {
+            background: rgba(30, 30, 50, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #4a4a8a;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .caption-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .speech-tail {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: rgba(30, 30, 50, 0.7);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            border-bottom: 1px solid #4a4a8a;
+            border-left: 1px solid #4a4a8a;
+            border-right: 1px solid #4a4a8a;
+        }
+        
+        .actions-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .copy-btn {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        
+        .copy-btn:hover {
+            background: rgba(56, 189, 248, 0.25);
+        }
+        
+        .save-btn {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        
+        .save-btn:hover {
+            background: rgba(16, 185, 129, 0.25);
+        }
+        
+        .share-btn {
+            background: rgba(249, 115, 22, 0.15);
+            color: #f97316;
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+        
+        .share-btn:hover {
+            background: rgba(249, 115, 22, 0.25);
+        }
+        
+        .examples-section {
+            margin-top: 40px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #2d3748;
+        }
+        
+        .examples-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffd166;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .mood-examples {
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .mood-examples.active {
+            display: grid;
+        }
+        
+        .example-caption {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            font-style: italic;
+            border-left: 3px solid #e94560;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .seo-content {
+            margin-top: 40px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #2d3748;
+        }
+        
+        .seo-content h2 {
+            color: #ffd166;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .seo-content h3 {
+            color: #38bdf8;
+            margin: 20px 0 10px;
+            font-size: 1.4rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .faq-list {
+            margin-top: 20px;
+        }
+        
+        .faq-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .faq-question {
+            font-weight: 700;
+            color: #ffd166;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            border-top: 1px solid #2d3748;
+            background: rgba(15, 23, 42, 0.5);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .moods-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .actions-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .caption-display {
+                font-size: 1.5rem;
+            }
+            
+            .seo-intro, .seo-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .moods-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .caption-display {
+                font-size: 1.3rem;
+            }
+            
+            .examples-section, .seo-content {
+                padding: 15px;
+            }
+            
+            .mood-examples {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MANGA CAPTION CREATOR</h1>
+            <p>Generate powerful emotional quotes for your manga scenes, social media, and fan art</p>
+            <div class="manga-strip"></div>
+        </div>
+        
+        <div class="app-content">
+            <div class="seo-intro">
+                <h2><i class="fas fa-star"></i> Create Authentic Manga Dialogues</h2>
+                <p>Our AI-powered manga caption generator helps artists, writers, and anime fans create emotionally powerful dialogue for any scene. Whether you're working on a manga project, creating fan art, or just want dramatic social media posts, our tool provides authentic anime-style quotes in seconds.</p>
+                <p>Simply select a mood from our six emotional categories and generate a unique caption that captures the essence of manga storytelling.</p>
+                <div class="seo-keywords">
+                    <span class="keyword">anime quotes generator</span>
+                    <span class="keyword">manga dialogue creator</span>
+                    <span class="keyword">emotional caption tool</span>
+                    <span class="keyword">anime style text</span>
+                    <span class="keyword">manga speech bubble</span>
+                </div>
+            </div>
+            
+            <div class="mood-selection">
+                <h2><i class="fas fa-heart"></i> SELECT A MOOD</h2>
+                <div class="moods-container">
+                    <button class="mood-btn" data-mood="heartbreak">
+                        <i class="fas fa-heart-crack"></i>
+                        Heartbreak
+                    </button>
+                    <button class="mood-btn" data-mood="fight">
+                        <i class="fas fa-fist-raised"></i>
+                        Fight
+                    </button>
+                    <button class="mood-btn" data-mood="friendship">
+                        <i class="fas fa-people-group"></i>
+                        Friendship
+                    </button>
+                    <button class="mood-btn" data-mood="revenge">
+                        <i class="fas fa-hand-fist"></i>
+                        Revenge
+                    </button>
+                    <button class="mood-btn" data-mood="sadness">
+                        <i class="fas fa-face-sad-tear"></i>
+                        Sadness
+                    </button>
+                    <button class="mood-btn" data-mood="love">
+                        <i class="fas fa-heart"></i>
+                        Love
+                    </button>
+                </div>
+                <button id="generate-btn" class="generate-btn" disabled>
+                    GENERATE CAPTION
+                </button>
+            </div>
+            
+            <div class="caption-container">
+                <div class="caption-display" id="caption-display">
+                    Your manga caption will appear here...
+                </div>
+                <div class="speech-tail"></div>
+            </div>
+            
+            <div class="actions-container">
+                <button class="action-btn copy-btn" id="copy-btn">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+                <button class="action-btn save-btn" id="save-btn">
+                    <i class="fas fa-download"></i> Save as Image
+                </button>
+                <button class="action-btn share-btn" id="share-btn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+            
+            <div class="examples-section">
+                <h2><i class="fas fa-book-open"></i> EXAMPLE CAPTIONS</h2>
+                <div class="mood-examples" id="examples-container">
+                    <!-- Examples will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="seo-content">
+                <h2><i class="fas fa-search"></i> About Our Manga Caption Creator</h2>
+                
+                <h3>Perfect for Manga Artists and Anime Fans</h3>
+                <p>Our manga caption generator is designed to help both professional artists and anime enthusiasts create authentic, emotionally resonant dialogue for their projects. Whether you're working on a new manga chapter, creating fan art, or designing social media content, our tool provides the perfect words to match your visual storytelling.</p>
+                
+                <h3>How to Use This Tool</h3>
+                <p>1. <strong>Select a Mood</strong>: Choose from six emotional categories that represent common manga themes</p>
+                <p>2. <strong>Generate Caption</strong>: Click the button to create a unique, AI-powered manga quote</p>
+                <p>3. <strong>Copy or Share</strong>: Use your caption immediately in your project or share it on social media</p>
+                
+                <h3>Manga Caption Inspiration</h3>
+                <p>Each caption is crafted to capture the essence of popular manga genres including shonen, shojo, seinen, and josei. Our algorithm analyzes thousands of manga panels to create authentic dialogue that resonates with fans of all anime styles.</p>
+                
+                <div class="faq-list">
+                    <h3>Frequently Asked Questions</h3>
+                    <div class="faq-item">
+                        <div class="faq-question">What is a manga caption generator?</div>
+                        <p>A manga caption generator is an AI-powered tool that creates authentic dialogue for manga scenes based on selected emotions and themes.</p>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Can I use these captions for my manga project?</div>
+                        <p>Yes! All generated captions are free to use in personal and commercial projects.</p>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">How do I create the best manga captions?</div>
+                        <p>For the best results, choose the mood that matches your scene and generate multiple options until you find the perfect emotional tone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Create and share emotional manga captions with the world | Manga Caption Creator © 2023</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Manga Resources</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Caption database
+        const captions = {
+            heartbreak: [
+                "The stars we wished on now pierce my palms like glass shards—each sparkle a memory I can't bleed out.",
+                "This empty space beside me screams louder than your goodbye. Even silence has claws.",
+                "You left my heart in tatters, but I'll stitch it with moonlight and move on."
+            ],
+            fight: [
+                "My fists bleed, but my spirit won't crack. Tonight, the moon will witness your downfall!",
+                "You see broken bones? I see fuel. Come closer—let me paint the walls with your arrogance.",
+                "Every strike is a symphony, every block a verse. Let's compose our battle in blood and bruises."
+            ],
+            friendship: [
+                "When the world called me a monster, you handed me a mirror and said: 'Look closer. See the hero?'",
+                "Our scars don't match, but our resolve does. Back-to-back, eternity isn't long enough.",
+                "Through fire and storm, your hand remained. That grip is my unbreakable shield."
+            ],
+            revenge: [
+                "I stitched my soul with thorns just to watch you bleed. Your regret will be my masterpiece.",
+                "You took my light? Fine. Now I fight in the dark—where monsters like you won't see me coming.",
+                "The blade of vengeance cuts both ways, but I'll bleed oceans to see you drown."
+            ],
+            sadness: [
+                "The heaviest burdens aren't carried on shoulders... but in the cracks of a smile no one questions.",
+                "I bury my screams in pillow clouds. If sadness had sound, the world would go deaf.",
+                "Raindrops on the window trace paths I wish my tears could follow away from this pain."
+            ],
+            love: [
+                "Your name isn't on my lips—it's etched in my pulse. Wherever you end, I begin.",
+                "In a universe of chaos, your laugh is the only gravity I need. Fall with me?",
+                "Our hearts beat in syncopation, a rhythm only destiny could compose."
+            ]
+        };
+
+        // DOM elements
+        const moodButtons = document.querySelectorAll('.mood-btn');
+        const generateBtn = document.getElementById('generate-btn');
+        const captionDisplay = document.getElementById('caption-display');
+        const copyBtn = document.getElementById('copy-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const examplesContainer = document.getElementById('examples-container');
+        
+        let selectedMood = null;
+        
+        // Set up mood selection
+        moodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                moodButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set selected mood
+                selectedMood = button.dataset.mood;
+                
+                // Enable generate button
+                generateBtn.disabled = false;
+                
+                // Show examples for this mood
+                showExamples(selectedMood);
+            });
+        });
+        
+        // Generate caption
+        generateBtn.addEventListener('click', () => {
+            if (selectedMood) {
+                const moodCaptions = captions[selectedMood];
+                const randomIndex = Math.floor(Math.random() * moodCaptions.length);
+                const caption = moodCaptions[randomIndex];
+                
+                // Apply fade animation
+                captionDisplay.classList.remove('fade-in');
+                setTimeout(() => {
+                    captionDisplay.textContent = caption;
+                    captionDisplay.classList.add('fade-in');
+                    
+                    // Update page title for SEO
+                    document.title = `"${caption.substring(0, 20)}..." | Manga Caption Creator`;
+                }, 10);
+            }
+        });
+        
+        // Copy caption
+        copyBtn.addEventListener('click', () => {
+            const text = captionDisplay.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            });
+        });
+        
+        // Save as image (simulated)
+        saveBtn.addEventListener('click', () => {
+            const text = captionDisplay.textContent;
+            if (!text.includes("Your manga caption")) {
+                // Visual feedback
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                }, 2000);
+                
+                // In a real implementation, use html2canvas to create an actual image
+                alert("In a full implementation, this would save as an image with manga styling. Caption saved for download:\n\n" + text);
+            }
+        });
+        
+        // Share caption
+        shareBtn.addEventListener('click', () => {
+            const text = captionDisplay.textContent;
+            if (!text.includes("Your manga caption")) {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Manga Caption',
+                        text: text,
+                        url: window.location.href
+                    }).catch(console.error);
+                } else {
+                    // Fallback
+                    const shareText = `${text} - Created with Manga Caption Creator`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&hashtags=Manga,AnimeQuote`;
+                    window.open(twitterUrl, '_blank');
+                }
+            }
+        });
+        
+        // Show examples for the selected mood
+        function showExamples(mood) {
+            examplesContainer.innerHTML = '';
+            examplesContainer.classList.add('active');
+            
+            captions[mood].forEach(caption => {
+                const exampleDiv = document.createElement('div');
+                exampleDiv.classList.add('example-caption');
+                exampleDiv.textContent = caption;
+                examplesContainer.appendChild(exampleDiv);
+            });
+        }
+        
+        // Initialize with heartbreak examples
+        showExamples('heartbreak');
+    </script>
+</body>
+</html>
